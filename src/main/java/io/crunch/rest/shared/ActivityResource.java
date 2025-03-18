@@ -6,6 +6,9 @@ import org.jboss.resteasy.reactive.RestResponse;
 
 import java.util.List;
 
+/**
+ * The REST API used as a testing ground for the different REST client implementations.
+ */
 @Path("/api")
 public class ActivityResource {
 

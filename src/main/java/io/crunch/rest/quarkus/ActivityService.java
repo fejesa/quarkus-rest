@@ -1,6 +1,7 @@
-package io.crunch.rest.simple;
+package io.crunch.rest.quarkus;
 
 import io.crunch.rest.shared.Activity;
+import io.crunch.rest.simple.ActivityHeadersFactory;
 import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
@@ -13,12 +14,12 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import java.util.List;
 
 @Path("/activities")
-@RegisterRestClient(configKey = "activities-simple-api")
-@RegisterClientHeaders(ActivitySimpleHeadersFactory.class)
-public interface ActivitySimpleService {
+@RegisterRestClient(configKey = "activities-quarkus")
+@RegisterClientHeaders(ActivityHeadersFactory.class)
+public interface ActivityService {
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON) // no need to set if quarkus-rest-client-jackson is installed
     @Consumes(MediaType.APPLICATION_JSON)
     Uni<List<Activity>> getActivities();
 }
