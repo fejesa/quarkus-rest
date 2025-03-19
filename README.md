@@ -21,7 +21,9 @@ public RestResponse<List<Activity>> getActivities();
 ```
 
 This endpoint returns a list of activities, such as *Run - 30 mins*.
-TODO: Create an image as a high-level flow diagram.
+
+To access the API we need to define a REST client and a component that uses the client to fetch activities. the following diagram shows the components and their interactions:
+![Quarkus REST Client Components](docs/quarkus-rest-client.png)
 ---
 
 ## Using a CDI-Based REST Client
