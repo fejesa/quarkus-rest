@@ -18,13 +18,15 @@ import java.util.List;
  * It utilizes the {@link ActivityService} REST client, which is injected using {@link RestClient}.
  * The method returns a reactive {@link Uni} with a list of {@link Activity} objects.
  * </p>
+ * The default scope of this resource is {@link jakarta.enterprise.context.ApplicationScoped}.
  */
 @Path("/simple")
 public class ActivityResource {
 
     private final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private final ActivityService activityService;
+    @RestClient
+    private ActivityService activityService;
 
     /**
      * REST client for interacting with the activity service.
