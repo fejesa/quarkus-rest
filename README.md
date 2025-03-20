@@ -26,7 +26,6 @@ To access the API we need to define a REST client and a component that uses the 
 The following diagram shows the components and their interactions:
 ![Quarkus REST Client Components](docs/quarkus-rest-client.png)
 
----
 ## Using a CDI-Based REST Client
 By MicroProfile specification, we define a *Type-Safe REST Client* using Java interfaces:
 
@@ -61,20 +60,54 @@ public class ActivityResource {
 Quarkus' *Ahead-Of-Time Compilation (AOT)* generates the REST client implementation and places it into `generated-bytecode.jar`. The generated client might look like this (simplified version):
 
 ```java
-public class ActivityService$$QuarkusRestClientInterface extends RestClientBase implements Closeable, ActivityService {
+public class ActivitySimpleService$$QuarkusRestClientInterface extends RestClientBase implements Closeable, ActivitySimpleService {
    final WebTargetImpl inputTarget;
    final WebTargetImpl baseTarget;
    private static final Method javaMethod1;
    private final HeaderFiller headerFiller1;
 
-   public ActivityService$$QuarkusRestClientInterface(WebTarget var1, List var2) {
-       WebTargetImpl var3 = (WebTargetImpl) var1;
+   public ActivitySimpleService$$QuarkusRestClientInterface(WebTarget var1, List var2) {
+       WebTargetImpl var3 = (WebTargetImpl)var1;
        this.inputTarget = var3;
-       this.baseTarget = this.baseTargetProducer(var3);
+       WebTargetImpl var4 = this.baseTargetProducer(var3);
+       ...
+       ClassLoader var5 = Thread.currentThread().getContextClassLoader();
+       Class var7 = Class.forName("io.crunch.rest.simple.ActivitySimpleHeadersFactory", false, var5);
+       Annotation[] var8 = new Annotation[0];
+       Object var9 = var6.instance(var7, var8).get();
+       MicroProfileRestClientRequestFilter var10 = new MicroProfileRestClientRequestFilter((ClientHeadersFactory)var9);
+       var4 = (WebTargetImpl)((Configurable)var4).register(var10);
+       ...
+       NoOpHeaderFiller var12 = NoOpHeaderFiller.INSTANCE;
+       this.headerFiller1 = (HeaderFiller)var12;
    }
    
    public Uni<List<Activity>> getActivities() {
-       return ((UniInvoker)var4.rx(UniInvoker.class)).method("GET", var15);
+       WebTarget var1 = (WebTarget)this.target1;
+       if (!ClientQueryParamSupport.isQueryParamPresent((WebTargetImpl)var1, "other-param")) {
+           ArrayList var2 = new ArrayList();
+           ((List)var2).add("other");
+           var1 = (WebTarget)((WebTargetImpl)var1).queryParam("other-param", (Collection)var2);
+       }
+
+       String[] var3 = new String[]{"application/json"};
+       Invocation.Builder var4 = var1.request(var3);
+       Method var5 = javaMethod1;
+       var4 = var4.property("org.eclipse.microprofile.rest.client.invokedMethod", var5);
+       ...
+       Class var10 = Class.forName("io.crunch.rest.shared.Activity", false, var8);
+       var9[0] = (Type)var10;
+       Object var11 = null;
+       ParameterizedTypeImpl var12 = new ParameterizedTypeImpl((Type)List.class, var9, (Type)var11);
+       GenericType var15 = new GenericType((Type)var12);
+
+       try {
+           ClassLoader var13 = Thread.currentThread().getContextClassLoader();
+           Class var14 = Class.forName("org.jboss.resteasy.reactive.client.impl.UniInvoker", false, var13);
+           return ((UniInvoker)var4.rx(var14)).method("GET", var15);
+       } catch (ProcessingException var18) {
+           ...
+       }
    }
 }
 ```
@@ -84,24 +117,27 @@ The injectable generated CDI-managed bean is a wrapper around the generated REST
 ```java
 @ApplicationScoped
 @RestClient
-@Typed({ActivityService.class})
+@Typed({ActivitySimpleService.class})
 @Path("/activities")
-public class ActivityService$$CDIWrapper extends RestClientReactiveCDIWrapperBase implements ActivityService {
-
-    public ActivityService$$CDIWrapper() {
-        super(ActivityService.class, "", "activities-simple", false);
+public class ActivitySimpleService$$CDIWrapper extends RestClientReactiveCDIWrapperBase implements ActivitySimpleService {
+    public ActivitySimpleService$$CDIWrapper() {
+        ClassLoader var1 = Thread.currentThread().getContextClassLoader();
+        Class var2 = Class.forName("io.crunch.rest.simple.ActivitySimpleService", false, var1);
+        super(var2, "", "activities-simple", false);
     }
 
-    @Consumes("application/json")
-    @Produces("application/json")
+    @ClientQueryParam(
+            name = "other-param",
+            value = {"other"}
+    )
+    @Consumes({"application/json"})
+    @Produces({"application/json"})
     public Uni<List<Activity>> getActivities() {
-        return getDelegate().getActivities();
+        return ((ActivitySimpleService)((RestClientReactiveCDIWrapperBase)this).getDelegate()).getActivities();
     }
 }
 ```
 With CDI, you only need to define the interface and apply annotations, avoiding boilerplate code. The generated class is marked with `@RestClient` and `@ApplicationScoped`, ensuring reuse across your application.
-
----
 
 ## Programmatic REST Client Creation
 
@@ -136,13 +172,16 @@ public ActivityResource(String url) {
 
 **Note:** You do not need to specify the `@RegisterRestClient` annotation when using programmatic client creation.
 
+If we compare the generated `QuarkusRestClientInterface` code - you can find it in the `generated-bytecode.jar` - with the previous one only the types are different, but the logic and the code sequence are the same.
+
+> [!WARNING]
+> I strongly recommend using different names (types) for the CDI-based and programmatic clients to avoid conflicts in the generated code!
+
 ### Why Use Programmatic Clients?
 
 Using programmatic client creation allows you to centralize configuration in one place instead of relying on property-based customization.
 
 A better approach is to use `@Producer` for REST client creation so that the client remains injectable via CDI.
-
----
 
 ## Execution Model: Reactive vs Blocking
 
@@ -170,8 +209,6 @@ In summary:
 - **Non-blocking API (`Uni<T>`)** runs on the *event-loop* thread.
 - **Blocking API (`T`)** moves execution to a *worker thread*.
 
----
-
 ## Conclusion
 
 - Quarkus REST Client simplifies REST API interaction.
@@ -181,4 +218,3 @@ In summary:
 - Choose between **blocking and reactive APIs** depending on your use case.
 
 This approach ensures that you build high-performance, scalable applications leveraging Quarkus' reactive core.
-

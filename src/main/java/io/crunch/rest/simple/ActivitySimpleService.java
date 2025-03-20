@@ -22,13 +22,13 @@ import java.util.List;
  * This interface defines a REST client using Quarkus REST Client Reactive.
  * It enables automatic client generation based on the interface definition.
  * The client is configured with {@code activities-simple} as its config key.
- * Custom headers are added via {@link ActivityHeadersFactory}.
+ * Custom headers are added via {@link ActivitySimpleHeadersFactory}.
  * </p>
  */
 @Path("/activities")
 @RegisterRestClient(configKey = "activities-simple")
-@RegisterClientHeaders(ActivityHeadersFactory.class)
-public interface ActivityService {
+@RegisterClientHeaders(ActivitySimpleHeadersFactory.class)
+public interface ActivitySimpleService {
 
     /**
      * Retrieves a list of activities from the remote service.

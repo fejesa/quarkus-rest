@@ -15,7 +15,7 @@ import java.util.List;
  * REST resource for retrieving activities using the Quarkus REST client.
  * <p>
  * This resource provides an endpoint that calls an external service to fetch activity data.
- * It utilizes the {@link ActivityService} REST client, which is injected using {@link RestClient}.
+ * It utilizes the {@link ActivitySimpleService} REST client, which is injected using {@link RestClient}.
  * The method returns a reactive {@link Uni} with a list of {@link Activity} objects.
  * </p>
  * The default scope of this resource is {@link jakarta.enterprise.context.ApplicationScoped}.
@@ -26,20 +26,20 @@ public class ActivityResource {
     private final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @RestClient
-    private ActivityService activityService;
+    private ActivitySimpleService activityService;
 
     /**
      * REST client for interacting with the activity service.
      * This is injected by Quarkus and automatically configured via {@link RestClient}.
      */
-    public ActivityResource(@RestClient ActivityService activityService) {
+    public ActivityResource(@RestClient ActivitySimpleService activityService) {
         this.activityService = activityService;
     }
 
     /**
      * Retrieves a list of activities from the external service.
      * <p>
-     * This method delegates the call to {@link ActivityService#getActivities()},
+     * This method delegates the call to {@link ActivitySimpleService#getActivities()},
      * which fetches activity data asynchronously. The response is logged before returning.
      * </p>
      *

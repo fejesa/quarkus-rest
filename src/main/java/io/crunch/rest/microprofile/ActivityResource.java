@@ -30,7 +30,7 @@ public class ActivityResource {
 
     private final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private final ActivityService activityService;
+    private final ActivityMicroprofileService activityService;
 
     /**
      * Constructs the REST client with custom configurations.
@@ -49,7 +49,7 @@ public class ActivityResource {
                 .header("x-other-header", "any-value") // Set a custom header
                 .queryParamStyle(QueryParamStyle.MULTI_PAIRS) // Configure query parameter style
                 .readTimeout(1000L, TimeUnit.MILLISECONDS) // Read timeout
-                .build(ActivityService.class);
+                .build(ActivityMicroprofileService.class);
     }
 
     /**

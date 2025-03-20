@@ -25,7 +25,7 @@ public class ActivityResource {
 
     private final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private final ActivityService activityService;
+    private final ActivityQuarkusService activityService;
 
     /**
      * Constructs an ActivityResource and initializes the REST client with custom configurations.
@@ -35,7 +35,7 @@ public class ActivityResource {
     public ActivityResource(@ConfigProperty(name = "quarkus.rest-client.activities-quarkus.url") String url) {
         this.activityService = QuarkusRestClientBuilder.newBuilder()
                 .baseUri(URI.create(url))
-                .clientHeadersFactory(new ActivityHeadersFactory())
+                .clientHeadersFactory(new ActivityQuarkusHeadersFactory())
                 .connectTimeout(100L, TimeUnit.MILLISECONDS)
                 .readTimeout(100L, TimeUnit.MILLISECONDS)
                 .httpClientOptions(new HttpClientOptions()
@@ -48,7 +48,7 @@ public class ActivityResource {
                 .userAgent("Quarkus-Rest-Client")
                 .property("some.config.key", "value")  // Custom property for additional configurations
                 .queryParamStyle(QueryParamStyle.MULTI_PAIRS)  // Query parameter formatting style
-                .build(ActivityService.class);
+                .build(ActivityQuarkusService.class);
     }
 
     /**

@@ -9,8 +9,8 @@ import org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 import java.util.List;
 
 @Path("/activities")
-@RegisterClientHeaders(ActivityHeadersFactory.class)
-public interface ActivityService {
+@RegisterClientHeaders(ActivityMicroprofileHeadersFactory.class)
+public interface ActivityMicroprofileService {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)

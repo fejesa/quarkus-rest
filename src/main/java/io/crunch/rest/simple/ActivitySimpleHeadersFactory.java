@@ -1,4 +1,4 @@
-package io.crunch.rest.microprofile;
+package io.crunch.rest.simple;
 
 import io.quarkus.rest.client.reactive.ReactiveClientHeadersFactory;
 import io.smallrye.mutiny.Uni;
@@ -16,14 +16,14 @@ import java.util.Random;
  * </p>
  */
 @ApplicationScoped
-public class ActivityHeadersFactory extends ReactiveClientHeadersFactory {
+public class ActivitySimpleHeadersFactory extends ReactiveClientHeadersFactory {
 
     private final Random random = new Random();
 
     /**
      * Generates additional headers for outgoing REST client requests.
      * <p>
-     * This method adds a custom header {@code x-activity-microprofile} with a
+     * This method adds a custom header {@code x-activity-simple} with a
      * random integer value between 0 and 999. The header can be used
      * by the remote service for tracking or load distribution purposes.
      * </p>
@@ -36,7 +36,7 @@ public class ActivityHeadersFactory extends ReactiveClientHeadersFactory {
     public Uni<MultivaluedMap<String, String>> getHeaders(MultivaluedMap<String, String> incomingHeaders, MultivaluedMap<String, String> clientOutgoingHeaders) {
         int v = random.nextInt(1000);
         var headers = new MultivaluedHashMap<String, String>();
-        headers.add("x-activity-microprofile", Integer.toString(v));
+        headers.add("x-activity-simple", Integer.toString(v));
         return Uni.createFrom().item(headers);
     }
 }
