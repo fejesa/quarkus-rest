@@ -25,8 +25,7 @@ public class ActivityResource {
 
     private final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    @RestClient
-    private ActivitySimpleService activityService;
+    private final ActivitySimpleService activityService;
 
     /**
      * REST client for interacting with the activity service.

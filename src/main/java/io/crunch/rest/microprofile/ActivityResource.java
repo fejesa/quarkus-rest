@@ -42,8 +42,8 @@ public class ActivityResource {
         this.activityService = ((RestClientBuilderImpl) RestClientBuilder.newBuilder())
                 .baseUri(URI.create(url))
                 .connectTimeout(1000L, TimeUnit.MILLISECONDS) // Connection timeout
-                // .executorService(executorService) - Not used due to non-blocking nature of the call
-                .followRedirects(true) // Enable following redirects
+                // .executorService(executorService) - Not used due to the non-blocking nature of the call
+                .followRedirects(true) // Enable the following redirects
                 .loggingScope(LoggingScope.ALL) // Log request and response details
                 .loggingBodyLimit(50_000) // Limit logging of body content to 50 KB
                 .header("x-other-header", "any-value") // Set a custom header
